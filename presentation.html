@@ -1,0 +1,1347 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OpenSpec 優缺點簡報</title>
+  <style>
+    :root {
+      --bg: #f6f5ef;
+      --bg-deep: #ece8dc;
+      --ink: #12212b;
+      --muted: #4f626f;
+      --primary: #0f766e;
+      --secondary: #e07a1f;
+      --accent: #d64545;
+      --card: #ffffff;
+      --line: #d6d2c7;
+      --ok: #2f855a;
+      --radius: 18px;
+      --shadow: 0 18px 45px rgba(18, 33, 43, 0.13);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 14% 14%, #fffdf7 0%, var(--bg) 55%),
+        radial-gradient(circle at 82% 20%, #f8f1dd 0%, transparent 42%),
+        radial-gradient(circle at 35% 90%, #e7f1ef 0%, transparent 48%);
+      overflow: hidden;
+    }
+
+    body.theme-dev {
+      --bg: #0e141d;
+      --bg-deep: #101c28;
+      --ink: #e8f0f7;
+      --muted: #98abb9;
+      --primary: #36c3b4;
+      --secondary: #f2b36a;
+      --accent: #ef6b73;
+      --card: #182431;
+      --line: #2a3b4b;
+      --ok: #4ecf8a;
+      --shadow: 0 18px 45px rgba(3, 9, 14, 0.55);
+      background:
+        radial-gradient(circle at 12% 12%, #152233 0%, var(--bg) 52%),
+        radial-gradient(circle at 82% 14%, #182a3a 0%, transparent 44%),
+        radial-gradient(circle at 34% 90%, #13222f 0%, transparent 48%);
+    }
+
+    .app {
+      width: 100%;
+      height: 100%;
+      display: grid;
+      grid-template-rows: 82px 1fr 74px;
+    }
+
+    .topbar {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      padding: 16px 26px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(6px);
+      gap: 12px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .brand-mark {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: linear-gradient(140deg, var(--primary), #2f9f95);
+      box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.25);
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-family: "Noto Serif TC", "Songti TC", serif;
+      font-size: 20px;
+      letter-spacing: 0.4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .progress-wrap {
+      width: clamp(140px, 22vw, 280px);
+      height: 9px;
+      border-radius: 20px;
+      background: #d8d7cf;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      width: 8.333%;
+      height: 100%;
+      border-radius: 20px;
+      background: linear-gradient(90deg, var(--secondary), #ffb347);
+      transition: width 260ms ease;
+    }
+
+    .stage {
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .mode-toggle {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid #bfd3d1;
+      border-radius: 999px;
+      background: #eef8f6;
+      overflow: hidden;
+    }
+
+    .mode-btn {
+      border: 0;
+      background: transparent;
+      color: #1f5350;
+      padding: 6px 10px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .mode-btn:focus-visible {
+      outline: 2px solid #1f5350;
+      outline-offset: -2px;
+    }
+
+    .mode-btn.is-active {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    body.theme-dev .topbar {
+      background: rgba(12, 19, 27, 0.78);
+      border-bottom-color: var(--line);
+    }
+
+    body.theme-dev .mode-toggle {
+      background: #12202b;
+      border-color: #2e4659;
+    }
+
+    body.theme-dev .mode-btn {
+      color: #b4cad8;
+    }
+
+    body.theme-dev .mode-btn:focus-visible {
+      outline-color: #9ad8d1;
+    }
+
+    body.theme-dev .progress-wrap {
+      background: #273643;
+    }
+
+    body.theme-dev .hint {
+      color: #b7c7d3;
+      background: rgba(19, 31, 43, 0.9);
+      border-color: var(--line);
+    }
+
+    .viewport {
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hint {
+      position: absolute;
+      right: 18px;
+      top: 18px;
+      z-index: 2;
+      font-size: 13px;
+      color: var(--muted);
+      background: rgba(255, 255, 255, 0.84);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 6px 10px;
+    }
+
+    .deck {
+      display: flex;
+      width: 1300%;
+      height: 100%;
+      transition: transform 420ms cubic-bezier(0.2, 0.7, 0.2, 1);
+    }
+
+    .slide {
+      width: calc(100% / 13);
+      padding: 26px 30px 30px;
+      display: grid;
+      grid-template-columns: 7fr 3fr;
+      gap: 20px;
+      min-width: 0;
+    }
+
+    .visual,
+    .copy {
+      min-width: 0;
+      min-height: 0;
+      border-radius: var(--radius);
+      background: var(--card);
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(214, 210, 199, 0.8);
+    }
+
+    .visual {
+      padding: 20px;
+      display: grid;
+      place-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .copy {
+      padding: 20px 18px;
+      display: grid;
+      grid-template-rows: auto auto minmax(0, 1fr) auto;
+      gap: 10px;
+    }
+
+    .kicker {
+      font-size: 12px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    .copy h2 {
+      margin: 0;
+      font-size: clamp(20px, 2.2vw, 28px);
+      line-height: 1.2;
+      font-family: "Noto Serif TC", "Songti TC", serif;
+    }
+
+    .copy p {
+      margin: 0;
+      line-height: 1.6;
+      color: #20333d;
+      font-size: 15px;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    .copy h2,
+    .evidence,
+    .mini,
+    .value-card p,
+    .risk-card p,
+    .panel ul,
+    .cell ul,
+    .example-item p {
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    body.theme-dev .copy p {
+      color: #d5e1ea;
+    }
+
+    .evidence {
+      border-top: 1px dashed var(--line);
+      padding-top: 10px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    body.theme-dev .visual,
+    body.theme-dev .copy,
+    body.theme-dev .panel,
+    body.theme-dev .stage-card,
+    body.theme-dev .value-card,
+    body.theme-dev .risk-card,
+    body.theme-dev .cli-track,
+    body.theme-dev .cell {
+      border-color: var(--line);
+      background: var(--card);
+      box-shadow: var(--shadow);
+    }
+
+    .badge {
+      display: inline-block;
+      margin-top: 4px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid #c8d8d6;
+      color: #1f5350;
+      background: #eef8f6;
+      font-size: 12px;
+    }
+
+    body.theme-dev .badge {
+      border-color: #31546a;
+      color: #9ed8d0;
+      background: #112531;
+    }
+
+    .flow-hero,
+    .workflow-band,
+    .cards-3,
+    .matrix {
+      width: 100%;
+      max-width: 860px;
+    }
+
+    .flow-hero {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      align-items: center;
+      gap: 10px;
+    }
+
+    .pill {
+      background: linear-gradient(120deg, #fff, #f4f7f8);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 14px 10px;
+      text-align: center;
+      font-weight: 700;
+      min-height: 64px;
+      display: grid;
+      place-items: center;
+    }
+
+    body.theme-dev .pill {
+      background: linear-gradient(120deg, #1b2b3a, #152332);
+      color: #dbe8f0;
+    }
+
+    .arrow {
+      text-align: center;
+      font-size: 24px;
+      color: var(--secondary);
+      animation: drift 1.6s ease-in-out infinite;
+    }
+
+    @keyframes drift {
+      0%,
+      100% { transform: translateX(0); }
+      50% { transform: translateX(6px); }
+    }
+
+    .split-compare {
+      width: 100%;
+      max-width: 860px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .panel {
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      padding: 16px;
+      background: #fff;
+    }
+
+    .panel h3 {
+      margin: 0 0 10px;
+      font-size: 16px;
+    }
+
+    .panel ul {
+      margin: 0;
+      padding-left: 18px;
+      line-height: 1.6;
+      color: #29424f;
+    }
+
+    body.theme-dev .panel ul {
+      color: #c7d8e4;
+    }
+
+    .workflow-band {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    .stage-card {
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: #fff;
+      padding: 12px;
+      min-height: 130px;
+    }
+
+    .stage-no {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .stage-title {
+      margin: 4px 0 8px;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    .mini {
+      font-size: 13px;
+      line-height: 1.5;
+      color: #2e4652;
+    }
+
+    body.theme-dev .mini {
+      color: #bcd0de;
+    }
+
+    .cards-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .value-card,
+    .risk-card {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px;
+      background: #fff;
+      min-height: 170px;
+    }
+
+    .value-card h3,
+    .risk-card h3 {
+      margin: 0 0 8px;
+      font-size: 17px;
+    }
+
+    .value-card p,
+    .risk-card p {
+      margin: 0;
+      color: #2f4a57;
+      line-height: 1.55;
+      font-size: 14px;
+    }
+
+    body.theme-dev .value-card p,
+    body.theme-dev .risk-card p {
+      color: #c8d9e5;
+    }
+
+    .cli-track {
+      width: 100%;
+      max-width: 860px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #fff;
+      padding: 14px;
+    }
+
+    .terminal {
+      background: #17232b;
+      color: #e7f2f0;
+      border-radius: 12px;
+      padding: 14px;
+      font-family: "SF Mono", "Menlo", "Consolas", monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      overflow: auto;
+    }
+
+    .terminal .prompt {
+      color: #90f0cf;
+    }
+
+    .disclaimer {
+      margin-top: 8px;
+      font-size: 12px;
+      color: #754f16;
+      background: #fff4df;
+      border: 1px solid #f0d6a8;
+      border-radius: 10px;
+      padding: 8px;
+    }
+
+    body.theme-dev .disclaimer {
+      color: #f2d3a4;
+      background: #2c2417;
+      border-color: #5d4b2e;
+    }
+
+    .matrix {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .cell {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #fff;
+      padding: 14px;
+      min-height: 140px;
+    }
+
+    .cell h3 {
+      margin: 0 0 8px;
+      font-size: 16px;
+    }
+
+    .cell ul {
+      margin: 0;
+      padding-left: 18px;
+      line-height: 1.55;
+      color: #2c4652;
+    }
+
+    .example-grid {
+      width: 100%;
+      max-width: 860px;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+    }
+
+    .example-item {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+      padding: 12px;
+      min-height: 120px;
+    }
+
+    .example-item h3 {
+      margin: 0 0 8px;
+      font-size: 14px;
+      color: var(--primary);
+    }
+
+    .example-item p {
+      margin: 0;
+      color: #29424f;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    body.theme-dev .example-item {
+      border-color: var(--line);
+      background: var(--card);
+    }
+
+    body.theme-dev .example-item p {
+      color: #c7d8e4;
+    }
+
+    body.theme-dev .cell ul {
+      color: #c7d8e4;
+    }
+
+    .bottombar {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 20px;
+      border-top: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.86);
+    }
+
+    body.theme-dev .bottombar {
+      background: rgba(11, 18, 26, 0.9);
+      border-top-color: var(--line);
+    }
+
+    .nav-btn {
+      border: 0;
+      border-radius: 10px;
+      background: var(--primary);
+      color: #fff;
+      font-weight: 700;
+      padding: 9px 14px;
+      cursor: pointer;
+    }
+
+    .nav-btn[disabled] {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    body.theme-dev .nav-btn {
+      color: #0b1720;
+    }
+
+    .path {
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .slide-in {
+      animation: emerge 360ms ease;
+    }
+
+    @keyframes emerge {
+      from {
+        opacity: 0;
+        transform: translateX(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @media (max-width: 980px) {
+      .slide {
+        grid-template-columns: 1fr;
+      }
+
+      .visual {
+        min-height: 46vh;
+      }
+
+      .copy {
+        min-height: 34vh;
+      }
+
+      .flow-hero,
+      .split-compare,
+      .workflow-band,
+      .cards-3,
+      .matrix {
+        max-width: 100%;
+      }
+
+      .cards-3,
+      .workflow-band,
+      .split-compare,
+      .matrix,
+      .example-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .path {
+        font-size: 12px;
+      }
+
+      .meta {
+        gap: 8px;
+      }
+
+      .mode-btn {
+        padding: 5px 8px;
+        font-size: 11px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true"></div>
+        <h1 id="brandTitle">OpenSpec 優缺點（主管版）</h1>
+      </div>
+      <div class="meta">
+        <div class="mode-toggle" role="group" aria-label="受眾模式切換">
+          <button class="mode-btn is-active" id="modeSupervisor" type="button" data-mode="supervisor" aria-pressed="true">主管版</button>
+          <button class="mode-btn" id="modeDev" type="button" data-mode="dev" aria-pressed="false">工程版</button>
+        </div>
+        <span id="counter">1 / 13</span>
+        <div class="progress-wrap" aria-hidden="true"><div class="progress-bar" id="progress"></div></div>
+        <span class="stage" id="stage">問題定義</span>
+      </div>
+    </header>
+
+    <main class="viewport">
+      <div class="hint">方向提示：請向右前進 →</div>
+      <section class="deck" id="deck">
+        <article class="slide slide-in">
+          <div class="visual">
+            <div class="flow-hero">
+              <div class="pill">混亂需求</div>
+              <div class="arrow">→</div>
+              <div class="pill">決策結構化</div>
+              <div class="arrow">→</div>
+              <div class="pill">可追溯交付</div>
+            </div>
+          </div>
+          <div class="copy">
+            <div class="kicker">Slide 1 / 封面</div>
+            <h2>OpenSpec 不是多寫文件，而是把專案講清楚</h2>
+            <p>這份簡報會一路往右走，快速看懂它能帶來什麼、要付出什麼。</p>
+            <div class="evidence">證據來源：本倉庫 OpenSpec 結構與提示流程</div>
+          </div>
+        </article>
+
+        <article class="slide">
+          <div class="visual">
+            <div class="split-compare">
+              <div class="panel">
+                <h3>傳統做法常出現</h3>
+                <ul>
+                  <li>需求在會議後持續漂移</li>
+                  <li>執行中看不到決策脈絡</li>
+                  <li>交付後難以回溯責任與依據</li>
+                </ul>
+              </div>
+              <div class="panel">
+                <h3>真正要解的，不只速度</h3>
+                <ul>
+                  <li>先解決對齊與治理</li>
+                  <li>再放大交付效率</li>
+                  <li>避免「快但不可控」</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="copy">
+            <div class="kicker">Slide 2 / 痛點</div>
+            <h2>專案會失速，常常不是因為寫不出來</h2>
+            <p>而是需求、決策、責任沒被排好。流程不清楚，溝通就會走樣。</p>
+            <div class="evidence">證據來源：變更提案 Why 與 What Changes</div>
+          </div>
+        </article>
+
+        <article class="slide">
+          <div class="visual">
+            <div class="workflow-band">
+              <div class="stage-card">
+                <div class="stage-no">01</div>
+                <div class="stage-title">Explore</div>
+                <div class="mini">先擴展理解，暫不實作</div>
+              </div>
+              <div class="stage-card">
+                <div class="stage-no">02</div>
+                <div class="stage-title">Propose</div>
+                <div class="mini">一次產生 proposal / design / tasks</div>
+              </div>
+              <div class="stage-card">
+                <div class="stage-no">03</div>
+                <div class="stage-title">Apply</div>
+                <div class="mini">依任務逐步落地並追蹤進度</div>
+              </div>
+              <div class="stage-card">
+                <div class="stage-no">04</div>
+                <div class="stage-title">Archive</div>
+                <div class="mini">封存變更並同步可用規格</div>
+              </div>
+            </div>
+          </div>
+          <div class="copy">
+            <div class="kicker">Slide 3 / 全景</div>
+            <h2>OpenSpec 用四步，把混亂變成有節奏的推進</h2>
+            <p>不是多加流程，而是每一步都看得到、接得上、交得清楚。</p>
+            <div class="evidence">證據來源：opsx-explore / propose / apply / archive prompts</div>
+          </div>
+        </article>
+
+        <article class="slide">
+          <div class="visual">
+            <div class="panel" style="width:100%;max-width:860px;">
+              <h3>Explore 的核心規則</h3>
+              <ul>
+                <li>可探索問題空間、架構與風險</li>
+                <li>可讀檔、可比較方案、可畫圖澄清</li>
+                <li>不可直接實作功能（先想清楚）</li>
+              </ul>
+            </div>
+          </div>
+          <div class="copy">
+            <div class="kicker">Slide 4 / Explore</div>
+            <h2>先想清楚，再動手，才不會白忙一場</h2>
+            <p>先確認值不值得做、做到哪裡，後面才不會一直回頭改。</p>
+            <div class="evidence">證據來源：opsx-explore.prompt.md guardrails</div>
+          </div>
+        </article>
+
+        <article class="slide">
+          <div class="visual">
+            <div class="cards-3">
+              <div class="value-card">
+                <h3>proposal.md</h3>
+                <p>講清楚為什麼現在要做、影響到哪些地方。</p>
+              </div>
+              <div class="value-card">
+                <h3>design.md</h3>
+                <p>說明要怎麼做，以及為什麼這樣選。</p>
+              </div>
+              <div class="value-card">
+                <h3>tasks.md</h3>
+                <p>把工作拆成一格一格，做完就能打勾。</p>
+              </div>
+            </div>
+          </div>
+          <div class="copy">
+            <div class="kicker">Slide 5 / Propose</div>
+            <h2>提案階段一次把「為什麼、怎麼做、怎麼執行」說完</h2>
+            <p>開工前先對齊，後面就少很多來回與重工。</p>
+            <div class="evidence">證據來源：opsx-propose.prompt.md artifact 定義</div>
+          </div>
+        </article>
+
+        <article class="slide">
+          <div class="visual">
+            <div class="panel" style="width:100%;max-width:860px;">
+              <h3>Apply 任務循環</h3>
+              <div class="workflow-band">
+                <div class="stage-card"><div class="stage-title">讀 context</div><div class="mini">proposal/specs/design/tasks</div></div>
+                <div class="stage-card"><div class="stage-title">執行任務</div><div class="mini">一次聚焦一項變更</div></div>
+                <div class="stage-card"><div class="stage-title">勾選完成</div><div class="mini">- [ ] 轉 - [x]</div></div>
+                <div class="stage-card"><div class="stage-title">再檢查狀態</div><div class="mini">持續到 all done</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="copy">
+            <div class="kicker">Slide 6 / Apply</div>
+            <h2>執行時一件一件完成，比一次大包交付更穩</h2>
+            <p>每一步都能確認，發現偏掉也能立刻拉回來。</p>
+            <div class="evidence">證據來源：opsx-apply.prompt.md state 與 loop 規則</div>
+          </div>
+        </article>
+
+        <article class="slide">
+          <div class="visual">
+            <div class="flow-hero" style="grid-template-columns: 1fr 0.5fr 1fr 0.5fr 1fr;">
+              <div class="pill">changes/&lt;name&gt;</div>
+              <div class="arrow">→</div>
+              <div class="pill">archive/YYYY-MM-DD-&lt;name&gt;</div>
+              <div class="arrow">→</div>
+              <div class="pill">specs/ 主規格同步</div>
+            </div>
+          </div>
+          <div class="copy">
+            <div class="kicker">Slide 7 / Archive</div>
+            <h2>封存不只是收尾，還是把經驗留給下一次</h2>
+            <p>這次做完的學習會回到主規格，下一個專案能直接少踩坑。</p>
+            <div class="evidence">證據來源：opsx-archive.prompt.md delta specs sync</div>
+          </div>
+        </article>
+
+        <article class="slide">
+          <div class="visual">
+            <div class="cli-track">
+              <div class="terminal">
+                <div><span class="prompt">$</span> openspec new change "openspec-presentation-pros-cons-zh"</div>
+                <div><span class="prompt">$</span> openspec status --change "openspec-presentation-pros-cons-zh" --json</div>
+                <div><span class="prompt">$</span> openspec instructions proposal --change "openspec-presentation-pros-cons-zh" --json</div>
+                <div><span class="prompt">$</span> openspec instructions apply --change "openspec-presentation-pros-cons-zh" --json</div>
+                <div><span class="prompt">$</span> openspec status --change "openspec-presentation-pros-cons-zh"</div>
+              </div>
+              <div class="disclaimer">示意頁：以上為流程示意（非 live demo），目的在說明管理節點與可追蹤狀態。</div>
+            </div>
+          </div>
+          <div class="copy">
+            <div class="kicker">Slide 8 / CLI 示意</div>
+            <h2>流程能用指令跑，代表它可以被標準化</h2>
+            <p>主管不用盯細節，只要看狀態就知道專案目前在哪一段。</p>
+            <div class="evidence">證據來源：本次實際變更流程與 openspec CLI 輸出</div>
+          </div>
+        </article>
+
+        <article class="slide">
+          <div class="visual">
+            <div class="example-grid">
+              <div class="example-item">
+                <h3>問題</h3>
+                <p>工程受眾與主管受眾共用淺色語言，工程模式辨識度不足。</p>
+              </div>
+              <div class="example-item">
+                <h3>做法</h3>
+                <p>建立 mode 對應 theme 的單一映射：supervisor=light，dev=dark。</p>
+              </div>
+              <div class="example-item">
+                <h3>命令路徑</h3>
+                <p>new change → instructions apply → status all_done</p>
+              </div>
+              <div class="example-item">
+                <h3>結果</h3>
+                <p>切換模式時，文案與主題同時切換，且不重置當前頁。</p>
+              </div>
+              <div class="example-item">
+                <h3>收斂</h3>
+                <p>同一骨架服務雙受眾，展示一致且維運成本更低。</p>
+              </div>
+            </div>
+          </div>
+          <div class="copy">
+            <div class="kicker">Slide 9 / 實作範例</div>
+            <h2>用 add-dev-dark-theme，示範同骨架雙受眾如何落地</h2>
+            <p>這不是換皮，而是把受眾語言與視覺情境綁在一起，讓溝通與決策更直覺。</p>
+            <div class="evidence">證據來源：add-dev-dark-theme proposal / design / spec / tasks</div>
+          </div>
+        </article>
+
+        <article class="slide">
+          <div class="visual">
+            <div class="cards-3">
+              <div class="value-card">
+                <h3>管理更有抓手</h3>
+                <p>每個階段都有明確輸入輸出，不再靠感覺追進度。</p>
+              </div>
+              <div class="value-card">
+                <h3>決策可回頭查</h3>
+                <p>從提案到封存都有紀錄，事後能快速釐清原因。</p>
+              </div>
+              <div class="value-card">
+                <h3>跨角色更同頻</h3>
+                <p>先對齊再開工，工程、PM、主管比較不會各說各話。</p>
+              </div>
+            </div>
+          </div>
+          <div class="copy">
+            <div class="kicker">Slide 9 / 優勢</div>
+            <h2>OpenSpec 最大價值，不是更快，而是更穩</h2>
+            <p>團隊越大、事情越複雜，「可控」通常比「局部快」更重要。</p>
+            <div class="evidence">證據來源：proposal/design 中的 goals 與 impact</div>
+          </div>
+        </article>
+
+        <article class="slide">
+          <div class="visual">
+            <div class="cards-3">
+              <div class="risk-card">
+                <h3>CLI 相依</h3>
+                <p>導入初期要花時間熟悉流程與工具。</p>
+                <span class="badge">緩解：先從小範圍試點</span>
+              </div>
+              <div class="risk-card">
+                <h3>同步複雜</h3>
+                <p>封存和規格同步要有命名與審核規則。</p>
+                <span class="badge">緩解：固定同步檢查清單</span>
+              </div>
+              <div class="risk-card">
+                <h3>人工勾選</h3>
+                <p>如果沒即時勾選，進度看板就會失真。</p>
+                <span class="badge">緩解：完成即勾選 + review gate</span>
+              </div>
+            </div>
+          </div>
+          <div class="copy">
+            <div class="kicker">Slide 10 / 風險與代價</div>
+            <h2>好方案要同時講清楚好處和代價</h2>
+            <p>先把難點說明白，再配好對策，導入才會真的落地。</p>
+            <div class="evidence">證據來源：design.md risks / trade-offs</div>
+          </div>
+        </article>
+
+        <article class="slide">
+          <div class="visual">
+            <div class="workflow-band" style="grid-template-columns: repeat(3, 1fr);">
+              <div class="stage-card">
+                <div class="stage-title">Pilot（2-4 週）</div>
+                <div class="mini">單一專案試點，建立提案與任務節奏</div>
+              </div>
+              <div class="stage-card">
+                <div class="stage-title">Team（1-2 月）</div>
+                <div class="mini">擴展到跨職能小隊，建立 review gate</div>
+              </div>
+              <div class="stage-card">
+                <div class="stage-title">Org（季度）</div>
+                <div class="mini">導入 archive 與 specs 回灌機制</div>
+              </div>
+            </div>
+          </div>
+          <div class="copy">
+            <div class="kicker">Slide 11 / 導入策略</div>
+            <h2>建議分三階段導入：先小試，再擴大</h2>
+            <p>不要一口氣全改，先用低風險方式證明有效，再全面推開。</p>
+            <div class="evidence">證據來源：design.md migration plan 與 open questions</div>
+          </div>
+        </article>
+
+        <article class="slide">
+          <div class="visual">
+            <div class="matrix">
+              <div class="cell">
+                <h3>該用 OpenSpec</h3>
+                <ul>
+                  <li>跨角色協作頻繁</li>
+                  <li>需求變動風險高</li>
+                  <li>需要可追溯決策紀錄</li>
+                </ul>
+              </div>
+              <div class="cell">
+                <h3>可暫不使用</h3>
+                <ul>
+                  <li>單人短期實驗</li>
+                  <li>需求穩定且範圍極小</li>
+                  <li>尚未準備流程紀律</li>
+                </ul>
+              </div>
+              <div class="cell">
+                <h3>下一步行動</h3>
+                <ul>
+                  <li>挑一個中等複雜試點</li>
+                  <li>設定 2-3 個治理指標</li>
+                  <li>四週後做一次回顧</li>
+                </ul>
+              </div>
+              <div class="cell">
+                <h3>關鍵結論</h3>
+                <ul>
+                  <li>OpenSpec 重點在可控，不在炫技</li>
+                  <li>流程越清楚，團隊越跑得久</li>
+                  <li>流程畫清楚，管理就好溝通</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="copy">
+            <div class="kicker">Slide 12 / 結語</div>
+            <h2>事情越複雜，OpenSpec 的價值越明顯</h2>
+            <p>如果你要的是好溝通、可追蹤、可交接，現在就可以啟動試點。</p>
+            <div class="evidence">證據來源：spec requirement + proposal impact + design goals</div>
+          </div>
+        </article>
+      </section>
+    </main>
+
+    <footer class="bottombar">
+      <button class="nav-btn" id="prev">← 上一頁</button>
+      <div class="path">路徑：先看問題 → 看流程 → 看案例 → 看好壞 → 看怎麼導入 → 收斂決策</div>
+      <button class="nav-btn" id="next">下一頁 →</button>
+    </footer>
+  </div>
+
+  <script>
+    const deck = document.getElementById("deck");
+    const progress = document.getElementById("progress");
+    const counter = document.getElementById("counter");
+    const stage = document.getElementById("stage");
+    const prev = document.getElementById("prev");
+    const next = document.getElementById("next");
+    const brandTitle = document.getElementById("brandTitle");
+    const modeSupervisor = document.getElementById("modeSupervisor");
+    const modeDev = document.getElementById("modeDev");
+    const modeButtons = [modeSupervisor, modeDev];
+
+    const titleNodes = Array.from(document.querySelectorAll(".slide .copy h2"));
+    const bodyNodes = Array.from(document.querySelectorAll(".slide .copy p"));
+    const evidenceNodes = Array.from(document.querySelectorAll(".slide .copy .evidence"));
+
+    const copyMap = [
+      {
+        supervisor: {
+          title: "OpenSpec 不是多寫文件，而是把專案講清楚",
+          body: "這份簡報會一路往右走，快速看懂它能帶來什麼、要付出什麼。",
+          evidence: "證據來源：本倉庫 OpenSpec 結構與提示流程"
+        },
+        dev: {
+          title: "OpenSpec 把需求、設計、任務與狀態串成可追溯流程",
+          body: "同一套 12 頁骨架下，透過模式切換可切換決策語氣與技術語氣。",
+          evidence: "工程證據：schema=spec-driven + prompts/skills 定義流程階段"
+        }
+      },
+      {
+        supervisor: {
+          title: "專案會失速，常常不是因為寫不出來",
+          body: "而是需求、決策、責任沒被排好。流程不清楚，溝通就會走樣。",
+          evidence: "證據來源：變更提案 Why 與 What Changes"
+        },
+        dev: {
+          title: "失速的技術根因常來自需求漂移與決策脈絡斷裂",
+          body: "缺乏可追溯 artifact 會放大重工與回歸風險。",
+          evidence: "工程證據：proposal 中 Why/Impact 定義問題面"
+        }
+      },
+      {
+        supervisor: {
+          title: "OpenSpec 用四步，把混亂變成有節奏的推進",
+          body: "不是多加流程，而是每一步都看得到、接得上、交得清楚。",
+          evidence: "證據來源：opsx-explore / propose / apply / archive prompts"
+        },
+        dev: {
+          title: "Explore→Propose→Apply→Archive 對應完整 artifact lifecycle",
+          body: "每個階段都能對應輸入輸出與狀態檢查點。",
+          evidence: "工程證據：status/applyRequires/artifacts 狀態圖可機器化讀取"
+        }
+      },
+      {
+        supervisor: {
+          title: "先想清楚，再動手，才不會白忙一場",
+          body: "先確認值不值得做、做到哪裡，後面才不會一直回頭改。",
+          evidence: "證據來源：opsx-explore.prompt.md guardrails"
+        },
+        dev: {
+          title: "Explore 階段先釐清假設，避免把錯方向實作到底",
+          body: "此階段允許研究與比較，但禁止直接進入功能實作。",
+          evidence: "工程證據：explore guardrails（thinking only）"
+        }
+      },
+      {
+        supervisor: {
+          title: "提案階段一次把「為什麼、怎麼做、怎麼執行」說完",
+          body: "開工前先對齊，後面就少很多來回與重工。",
+          evidence: "證據來源：opsx-propose.prompt.md artifact 定義"
+        },
+        dev: {
+          title: "proposal/design/tasks 建立需求契約與依賴順序",
+          body: "先完成 proposal，才能解鎖 design/specs，再解鎖 tasks。",
+          evidence: "工程證據：openspec status 顯示 blocking/missingDeps"
+        }
+      },
+      {
+        supervisor: {
+          title: "執行時一件一件完成，比一次大包交付更穩",
+          body: "每一步都能確認，發現偏掉也能立刻拉回來。",
+          evidence: "證據來源：opsx-apply.prompt.md state 與 loop 規則"
+        },
+        dev: {
+          title: "Apply 以任務迴圈推進，狀態由 checkbox 驅動",
+          body: "每完成一項就更新 tasks，進度可被 apply 指令準確讀取。",
+          evidence: "工程證據：instructions apply 回傳 total/complete/remaining"
+        }
+      },
+      {
+        supervisor: {
+          title: "封存不只是收尾，還是把經驗留給下一次",
+          body: "這次做完的學習會回到主規格，下一個專案能直接少踩坑。",
+          evidence: "證據來源：opsx-archive.prompt.md delta specs sync"
+        },
+        dev: {
+          title: "Archive 階段保存變更快照，並處理 delta specs 同步",
+          body: "封存讓 change 可回溯，同步讓主規格持續演進。",
+          evidence: "工程證據：archive 路徑與 specs 同步策略"
+        }
+      },
+      {
+        supervisor: {
+          title: "流程能用指令跑，代表它可以被標準化",
+          body: "主管不用盯細節，只要看狀態就知道專案目前在哪一段。",
+          evidence: "證據來源：本次實際變更流程與 openspec CLI 輸出"
+        },
+        dev: {
+          title: "new/status/instructions/apply/status 是主要狀態轉移命令",
+          body: "command purpose 明確，可在每一步取得 machine-readable JSON。",
+          evidence: "工程證據：CLI 指令語義與 state=ready/all_done"
+        }
+      },
+      {
+        supervisor: {
+          title: "用一個真實 change，示範同骨架雙受眾如何落地",
+          body: "這不是換皮，而是把受眾語言與視覺情境綁在一起，讓溝通與決策更直覺。",
+          evidence: "證據來源：add-dev-dark-theme proposal / design / spec / tasks"
+        },
+        dev: {
+          title: "以 add-dev-dark-theme 驗證 mode-theme coupling 的可維護性",
+          body: "透過 CSS token 與 mode 驅動主題，保留單一 HTML、單一流程、單一狀態來源。",
+          evidence: "工程證據：mode 映射、切換原子性、持久化回復與可讀性回歸"
+        }
+      },
+      {
+        supervisor: {
+          title: "OpenSpec 最大價值，不是更快，而是更穩",
+          body: "團隊越大、事情越複雜，「可控」通常比「局部快」更重要。",
+          evidence: "證據來源：proposal/design 中的 goals 與 impact"
+        },
+        dev: {
+          title: "治理、可追溯、對齊能力能系統性降低重工風險",
+          body: "流程結構化可減少跨角色溝通耗損與狀態誤讀。",
+          evidence: "工程證據：artifact 鏈結完整 + progress 可驗證"
+        }
+      },
+      {
+        supervisor: {
+          title: "好方案要同時講清楚好處和代價",
+          body: "先把難點說明白，再配好對策，導入才會真的落地。",
+          evidence: "證據來源：design.md risks / trade-offs"
+        },
+        dev: {
+          title: "主要風險面：CLI 相依、同步複雜、勾選延遲造成狀態失真",
+          body: "需以命名規範、review gate、完成即更新機制控風險。",
+          evidence: "工程證據：design 風險條目與 mitigation 對應"
+        }
+      },
+      {
+        supervisor: {
+          title: "建議分三階段導入：先小試，再擴大",
+          body: "不要一口氣全改，先用低風險方式證明有效，再全面推開。",
+          evidence: "證據來源：design.md migration plan 與 open questions"
+        },
+        dev: {
+          title: "Pilot→Team→Org 漸進導入可降低改動風險",
+          body: "先建立最小可行流程，再逐步擴到跨職能與組織層。",
+          evidence: "工程證據：migration steps 與 rollout discipline"
+        }
+      },
+      {
+        supervisor: {
+          title: "事情越複雜，OpenSpec 的價值越明顯",
+          body: "如果你要的是好溝通、可追蹤、可交接，現在就可以啟動試點。",
+          evidence: "證據來源：spec requirement + proposal impact + design goals"
+        },
+        dev: {
+          title: "高複雜與跨職能場景下，規格化流程能放大長期效率",
+          body: "當需求、設計、任務與狀態能被同一流程追蹤，重工與溝通成本會明顯下降。",
+          evidence: "工程證據：audience-mode-toggle specs（mode switch + persistence）"
+        }
+      }
+    ];
+
+    const storageKey = "openspec-presentation-mode";
+
+    function loadMode() {
+      try {
+        const value = localStorage.getItem(storageKey);
+        if (value === "supervisor" || value === "dev") {
+          return value;
+        }
+      } catch (error) {
+        // If storage is unavailable, continue with default mode.
+      }
+      return "supervisor";
+    }
+
+    let mode = loadMode();
+
+    const stageNames = [
+      "問題定義",
+      "問題定義",
+      "流程總覽",
+      "流程總覽",
+      "流程總覽",
+      "流程總覽",
+      "流程總覽",
+      "落地示意",
+      "案例驗證",
+      "價值評估",
+      "價值評估",
+      "導入策略",
+      "決策收斂"
+    ];
+
+    const total = 13;
+    let current = 0;
+
+    function applyModeCopy() {
+      for (let i = 0; i < copyMap.length; i += 1) {
+        const source = copyMap[i][mode];
+        titleNodes[i].textContent = source.title;
+        bodyNodes[i].textContent = source.body;
+        evidenceNodes[i].textContent = source.evidence;
+      }
+
+      brandTitle.textContent = mode === "dev" ? "OpenSpec 優缺點（工程版）" : "OpenSpec 優缺點（主管版）";
+      document.body.classList.toggle("theme-dev", mode === "dev");
+
+      modeButtons.forEach((button) => {
+        const active = button.dataset.mode === mode;
+        button.classList.toggle("is-active", active);
+        button.setAttribute("aria-pressed", active ? "true" : "false");
+      });
+    }
+
+    function setMode(nextMode) {
+      if (nextMode !== "supervisor" && nextMode !== "dev") {
+        return;
+      }
+      mode = nextMode;
+      try {
+        localStorage.setItem(storageKey, mode);
+      } catch (error) {
+        // If storage fails, keep rendering with in-memory mode.
+      }
+      applyModeCopy();
+    }
+
+    function render() {
+      deck.style.transform = `translateX(-${(100 / total) * current}%)`;
+      progress.style.width = `${((current + 1) / total) * 100}%`;
+      counter.textContent = `${current + 1} / ${total}`;
+      stage.textContent = stageNames[current];
+      prev.disabled = current === 0;
+      next.disabled = current === total - 1;
+
+      const slide = deck.children[current];
+      slide.classList.remove("slide-in");
+      requestAnimationFrame(() => slide.classList.add("slide-in"));
+    }
+
+    function move(delta) {
+      const target = Math.max(0, Math.min(total - 1, current + delta));
+      if (target !== current) {
+        current = target;
+        render();
+      }
+    }
+
+    prev.addEventListener("click", () => move(-1));
+    next.addEventListener("click", () => move(1));
+    modeSupervisor.addEventListener("click", () => setMode("supervisor"));
+    modeDev.addEventListener("click", () => setMode("dev"));
+
+    window.addEventListener("keydown", (event) => {
+      if (event.altKey && event.key === "1") {
+        setMode("supervisor");
+      } else if (event.altKey && event.key === "2") {
+        setMode("dev");
+      } else if (event.key === "ArrowRight") {
+        move(1);
+      } else if (event.key === "ArrowLeft") {
+        move(-1);
+      }
+    });
+
+    let touchStartX = null;
+    window.addEventListener("touchstart", (event) => {
+      touchStartX = event.changedTouches[0].screenX;
+    }, { passive: true });
+
+    window.addEventListener("touchend", (event) => {
+      if (touchStartX === null) {
+        return;
+      }
+      const delta = event.changedTouches[0].screenX - touchStartX;
+      if (Math.abs(delta) > 42) {
+        move(delta < 0 ? 1 : -1);
+      }
+      touchStartX = null;
+    }, { passive: true });
+
+    applyModeCopy();
+    render();
+  </script>
+</body>
+</html>
