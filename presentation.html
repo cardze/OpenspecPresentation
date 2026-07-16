@@ -885,31 +885,31 @@
             <div class="example-grid">
               <div class="example-item">
                 <h3>問題</h3>
-                <p>工程受眾與主管受眾共用淺色語言，工程模式辨識度不足。</p>
+                <p>實作做到一半若 chat session 中斷，團隊最怕流程斷線、狀態遺失。</p>
               </div>
               <div class="example-item">
                 <h3>做法</h3>
-                <p>建立 mode 對應 theme 的單一映射：supervisor=light，dev=dark。</p>
+                <p>把進度寫進 proposal、design、specs、tasks，而不是留在單次對話裡。</p>
               </div>
               <div class="example-item">
                 <h3>命令路徑</h3>
-                <p>new change → instructions apply → status all_done</p>
+                <p>new change → tasks 勾選 → session 中斷 → opsx-apply 繼續</p>
               </div>
               <div class="example-item">
                 <h3>結果</h3>
-                <p>切換模式時，文案與主題同時切換，且不重置當前頁。</p>
+                <p>換一個 session 仍能依目前 change state 接續，不必從頭重講脈絡。</p>
               </div>
               <div class="example-item">
                 <h3>收斂</h3>
-                <p>同一骨架服務雙受眾，展示一致且維運成本更低。</p>
+                <p>真正可續做的核心，不是記住聊天，而是保留 workflow state。</p>
               </div>
             </div>
           </div>
           <div class="copy">
             <div class="kicker">Slide 9 / 實作範例</div>
-            <h2>用 add-dev-dark-theme，示範同骨架雙受眾如何落地</h2>
-            <p>這不是換皮，而是把受眾語言與視覺情境綁在一起，讓溝通與決策更直覺。</p>
-            <div class="evidence">證據來源：add-dev-dark-theme proposal / design / spec / tasks</div>
+            <h2>用中斷後續做的案例，示範 OpenSpec 為什麼適合長週期工作</h2>
+            <p>會話可以停，但只要 change artifacts 還在，就能用 opsx-apply 從當前階段繼續推進。</p>
+            <div class="evidence">證據來源：proposal / design / specs / tasks / apply state</div>
           </div>
         </article>
 
@@ -1160,14 +1160,14 @@
       },
       {
         supervisor: {
-          title: "用一個真實 change，示範同骨架雙受眾如何落地",
-          body: "這不是換皮，而是把受眾語言與視覺情境綁在一起，讓溝通與決策更直覺。",
-          evidence: "證據來源：add-dev-dark-theme proposal / design / spec / tasks"
+          title: "就算 chat session 停住，流程也不會跟著中斷",
+          body: "進度被寫進 change artifacts 與 tasks，之後能從原階段接著做，交接也更穩。",
+          evidence: "證據來源：proposal / design / specs / tasks / apply state"
         },
         dev: {
-          title: "以 add-dev-dark-theme 驗證 mode-theme coupling 的可維護性",
-          body: "透過 CSS token 與 mode 驅動主題，保留單一 HTML、單一流程、單一狀態來源。",
-          evidence: "工程證據：mode 映射、切換原子性、持久化回復與可讀性回歸"
+          title: "opsx-apply 的續做能力來自 artifact-backed change state",
+          body: "session 結束後，仍可依 proposal、design、specs、tasks 與完成狀態恢復實作脈絡。",
+          evidence: "工程證據：instructions apply 讀取 total/complete/remaining 與 context files"
         }
       },
       {
