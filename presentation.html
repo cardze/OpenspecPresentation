@@ -1272,9 +1272,9 @@ AI 產出快但容易走偏，
     const modeDev = document.getElementById("modeDev");
     const modeButtons = [modeSupervisor, modeDev];
 
-    const titleNodes = Array.from(document.querySelectorAll(".slide:not(.intro-slide) .copy h2"));
-    const bodyNodes = Array.from(document.querySelectorAll(".slide:not(.intro-slide) .copy p"));
-    const evidenceNodes = Array.from(document.querySelectorAll(".slide:not(.intro-slide) .copy .evidence"));
+    const titleNodes = Array.from(document.querySelectorAll(".slide:not(.intro-slide):not(.index-slide) .copy h2"));
+    const bodyNodes = Array.from(document.querySelectorAll(".slide:not(.intro-slide):not(.index-slide) .copy p"));
+    const evidenceNodes = Array.from(document.querySelectorAll(".slide:not(.intro-slide):not(.index-slide) .copy .evidence"));
 
     const copyMap = [
       {
