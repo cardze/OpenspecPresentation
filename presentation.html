@@ -206,13 +206,13 @@
 
     .deck {
       display: flex;
-      width: 1300%;
+      width: 1500%;
       height: 100%;
       transition: transform 420ms cubic-bezier(0.2, 0.7, 0.2, 1);
     }
 
     .slide {
-      width: calc(100% / 13);
+      width: calc(100% / 15);
       padding: 26px 30px 30px;
       display: grid;
       grid-template-columns: 7fr 3fr;
@@ -250,6 +250,15 @@
       color: var(--muted);
       text-transform: uppercase;
       letter-spacing: 0.8px;
+    }
+
+    .presenter-info {
+      display: block;
+      margin-top: 2px;
+      font-size: 12px;
+      color: var(--muted);
+      text-transform: none;
+      letter-spacing: normal;
     }
 
     .copy h2 {
@@ -461,6 +470,55 @@
       font-size: 14px;
     }
 
+    .flip-card {
+      perspective: 800px;
+      cursor: pointer;
+      padding: 0;
+      height: 170px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .card-inner {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 500ms ease;
+    }
+
+    .flip-card:hover .card-inner {
+      transform: rotateY(180deg);
+    }
+
+    .card-front,
+    .card-back {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      border-radius: 12px;
+      padding: 14px;
+    }
+
+    .card-front {
+      background: #fff;
+    }
+
+    .card-back {
+      transform: rotateY(180deg);
+      background: rgba(42, 157, 143, 0.07);
+      font-family: "Courier New", Courier, monospace;
+      font-size: 13px;
+      color: var(--ink);
+      white-space: pre-wrap;
+      line-height: 1.6;
+    }
+
+    body.theme-dev .card-back {
+      background: rgba(154, 216, 209, 0.08);
+    }
+
     body.theme-dev .value-card p,
     body.theme-dev .risk-card p {
       color: #c8d9e5;
@@ -621,6 +679,86 @@
       animation: emerge 360ms ease;
     }
 
+    .intro-slide {
+      grid-template-columns: 1fr;
+    }
+
+    .index-slide {
+      grid-template-columns: 1fr;
+    }
+
+    .index-slide .copy {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .section-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 14px;
+      padding: 20px 26px 30px;
+      align-content: center;
+    }
+
+    .section-card {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 16px 18px;
+      border: 1.5px solid var(--line);
+      border-radius: 12px;
+      background: var(--surface);
+      text-align: left;
+      cursor: pointer;
+      transition: border-color 180ms, box-shadow 180ms;
+      font-family: inherit;
+    }
+
+    .section-card:hover {
+      border-color: var(--primary);
+      box-shadow: 0 2px 12px rgba(42, 157, 143, 0.15);
+    }
+
+    .section-card .card-num {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      color: var(--primary);
+      text-transform: uppercase;
+    }
+
+    .section-card .card-name {
+      font-size: 17px;
+      font-weight: 700;
+      font-family: "Noto Serif TC", "Songti TC", serif;
+      color: var(--ink);
+    }
+
+    .section-card .card-desc {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .intro-slide .copy {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    .intro-slide .copy h2 {
+      font-size: clamp(28px, 4vw, 48px);
+      margin-bottom: 16px;
+    }
+
+    .intro-slide .copy .presenter-info {
+      font-size: 18px;
+    }
+
     @keyframes emerge {
       from {
         opacity: 0;
@@ -688,7 +826,7 @@
           <button class="mode-btn is-active" id="modeSupervisor" type="button" data-mode="supervisor" aria-pressed="true">主管版</button>
           <button class="mode-btn" id="modeDev" type="button" data-mode="dev" aria-pressed="false">工程版</button>
         </div>
-        <span id="counter">1 / 13</span>
+        <span id="counter">1 / 15</span>
         <div class="progress-wrap" aria-hidden="true"><div class="progress-bar" id="progress"></div></div>
         <span class="stage" id="stage">問題定義</span>
       </div>
@@ -697,7 +835,18 @@
     <main class="viewport">
       <div class="hint">方向提示：請向右前進 →</div>
       <section class="deck" id="deck">
-        <article class="slide slide-in">
+        <article class="slide intro-slide slide-in">
+          <div class="copy">
+            <div class="kicker">Slide 1 / 報告人</div>
+            <h2>OpenSpec 優缺點</h2>
+            <p>
+              <span class="presenter-info">組別：外匯財會組</span>
+              <span class="presenter-info">姓名：王上澤</span>
+            </p>
+          </div>
+        </article>
+
+        <article class="slide">
           <div class="visual">
             <div class="flow-hero">
               <div class="pill">混亂需求</div>
@@ -708,10 +857,48 @@
             </div>
           </div>
           <div class="copy">
-            <div class="kicker">Slide 1 / 封面</div>
+            <div class="kicker">
+              Slide 2 / 封面
+            </div>
             <h2>OpenSpec 不是多寫文件，而是把專案講清楚</h2>
-            <p>這份簡報會一路往右走，快速看懂它能帶來什麼、要付出什麼。</p>
+            <p>往右走會逐步看到流程、案例、優缺點與導入策略，幫你判斷值不值得現在開始。</p>
             <div class="evidence">證據來源：本倉庫 OpenSpec 結構與提示流程</div>
+          </div>
+        </article>
+
+        <article class="slide index-slide">
+          <div class="section-cards">
+            <!-- jump indices are 0-based; update here if slides are reordered -->
+            <button class="section-card" onclick="jumpTo(3)">
+              <span class="card-num">01</span>
+              <span class="card-name">問題</span>
+              <span class="card-desc">為什麼現在的方式不夠</span>
+            </button>
+            <button class="section-card" onclick="jumpTo(4)">
+              <span class="card-num">02</span>
+              <span class="card-name">流程</span>
+              <span class="card-desc">OpenSpec 四步如何運作</span>
+            </button>
+            <button class="section-card" onclick="jumpTo(10)">
+              <span class="card-num">03</span>
+              <span class="card-name">實例</span>
+              <span class="card-desc">跑過一次是什麼感覺</span>
+            </button>
+            <button class="section-card" onclick="jumpTo(11)">
+              <span class="card-num">04</span>
+              <span class="card-name">評估</span>
+              <span class="card-desc">值不值得、代價是什麼</span>
+            </button>
+            <button class="section-card" onclick="jumpTo(13)">
+              <span class="card-num">05</span>
+              <span class="card-name">導入</span>
+              <span class="card-desc">怎麼開始</span>
+            </button>
+          </div>
+          <div class="copy">
+            <div class="kicker">Slide 3 / 路線圖</div>
+            <h2>今天的路線</h2>
+            <p>點任一區塊可以直接跳過去。</p>
           </div>
         </article>
 
@@ -721,7 +908,7 @@
               <div class="panel">
                 <h3>傳統做法常出現</h3>
                 <ul>
-                  <li>需求在會議後持續漂移</li>
+                  <li>需求在會議後一直在變</li>
                   <li>執行中看不到決策脈絡</li>
                   <li>交付後難以回溯責任與依據</li>
                 </ul>
@@ -738,7 +925,7 @@
           </div>
           <div class="copy">
             <div class="kicker">Slide 2 / 痛點</div>
-            <h2>專案會失速，常常不是因為寫不出來</h2>
+            <h2>與 AI 協作的專案會暴走，常常是因為沒有事先做好決定</h2>
             <p>而是需求、決策、責任沒被排好。流程不清楚，溝通就會走樣。</p>
             <div class="evidence">證據來源：變更提案 Why 與 What Changes</div>
           </div>
@@ -799,17 +986,45 @@
         <article class="slide">
           <div class="visual">
             <div class="cards-3">
-              <div class="value-card">
-                <h3>proposal.md</h3>
-                <p>講清楚為什麼現在要做、影響到哪些地方。</p>
+              <div class="value-card flip-card">
+                <div class="card-inner">
+                  <div class="card-front">
+                    <h3>proposal.md</h3>
+                    <p>講清楚為什麼現在要做、影響到哪些地方。</p>
+                  </div>
+                  <div class="card-back">## 為什麼
+AI 產出快但容易走偏，
+沒有事先對齊就會白做。
+
+## 會影響到哪裡
+· 決策的討論範圍
+· 誰需要知道這件事</div>
+                </div>
               </div>
-              <div class="value-card">
-                <h3>design.md</h3>
-                <p>說明要怎麼做，以及為什麼這樣選。</p>
+              <div class="value-card flip-card">
+                <div class="card-inner">
+                  <div class="card-front">
+                    <h3>design.md</h3>
+                    <p>說明要怎麼做，以及為什麼這樣選。</p>
+                  </div>
+                  <div class="card-back">## 設計決策
+選 Markdown 而非 Wiki
+
+→ 可以 commit 到 git，
+  有版本可以追溯。</div>
+                </div>
               </div>
-              <div class="value-card">
-                <h3>tasks.md</h3>
-                <p>把工作拆成一格一格，做完就能打勾。</p>
+              <div class="value-card flip-card">
+                <div class="card-inner">
+                  <div class="card-front">
+                    <h3>tasks.md</h3>
+                    <p>把工作拆成一格一格，做完就能打勾。</p>
+                  </div>
+                  <div class="card-back">- [x] 1.1 建立提案文件
+- [x] 1.2 設計架構
+- [ ] 2.1 實作功能
+- [ ] 2.2 測試驗收</div>
+                </div>
               </div>
             </div>
           </div>
@@ -970,22 +1185,22 @@
           <div class="visual">
             <div class="workflow-band" style="grid-template-columns: repeat(3, 1fr);">
               <div class="stage-card">
-                <div class="stage-title">Pilot（2-4 週）</div>
-                <div class="mini">單一專案試點，建立提案與任務節奏</div>
+                <div class="stage-title">先試一個專案</div>
+                <div class="mini">用 OpenSpec 跑一次完整流程</div>
               </div>
               <div class="stage-card">
-                <div class="stage-title">Team（1-2 月）</div>
-                <div class="mini">擴展到跨職能小隊，建立 review gate</div>
+                <div class="stage-title">推給組員一起用</div>
+                <div class="mini">建立共同的提案與任務習慣</div>
               </div>
               <div class="stage-card">
-                <div class="stage-title">Org（季度）</div>
-                <div class="mini">導入 archive 與 specs 回灌機制</div>
+                <div class="stage-title">固定成小組標準</div>
+                <div class="mini">每次交付都有規格可追溯</div>
               </div>
             </div>
           </div>
           <div class="copy">
             <div class="kicker">Slide 11 / 導入策略</div>
-            <h2>建議分三階段導入：先小試，再擴大</h2>
+            <h2>怎麼開始？三步走。</h2>
             <p>不要一口氣全改，先用低風險方式證明有效，再全面推開。</p>
             <div class="evidence">證據來源：design.md migration plan 與 open questions</div>
           </div>
@@ -1057,15 +1272,15 @@
     const modeDev = document.getElementById("modeDev");
     const modeButtons = [modeSupervisor, modeDev];
 
-    const titleNodes = Array.from(document.querySelectorAll(".slide .copy h2"));
-    const bodyNodes = Array.from(document.querySelectorAll(".slide .copy p"));
-    const evidenceNodes = Array.from(document.querySelectorAll(".slide .copy .evidence"));
+    const titleNodes = Array.from(document.querySelectorAll(".slide:not(.intro-slide) .copy h2"));
+    const bodyNodes = Array.from(document.querySelectorAll(".slide:not(.intro-slide) .copy p"));
+    const evidenceNodes = Array.from(document.querySelectorAll(".slide:not(.intro-slide) .copy .evidence"));
 
     const copyMap = [
       {
         supervisor: {
           title: "OpenSpec 不是多寫文件，而是把專案講清楚",
-          body: "這份簡報會一路往右走，快速看懂它能帶來什麼、要付出什麼。",
+          body: "往右走會逐步看到流程、案例、優缺點與導入策略，幫你判斷值不值得現在開始。",
           evidence: "證據來源：本倉庫 OpenSpec 結構與提示流程"
         },
         dev: {
@@ -1076,12 +1291,12 @@
       },
       {
         supervisor: {
-          title: "專案會失速，常常不是因為寫不出來",
+          title: "與 AI 協作的專案會暴走，常常是因為沒有事先做好決定",
           body: "而是需求、決策、責任沒被排好。流程不清楚，溝通就會走樣。",
           evidence: "證據來源：變更提案 Why 與 What Changes"
         },
         dev: {
-          title: "失速的技術根因常來自需求漂移與決策脈絡斷裂",
+          title: "暴走的技術根因常來自需求漂移與決策脈絡斷裂",
           body: "缺乏可追溯 artifact 會放大重工與回歸風險。",
           evidence: "工程證據：proposal 中 Why/Impact 定義問題面"
         }
@@ -1196,7 +1411,7 @@
       },
       {
         supervisor: {
-          title: "建議分三階段導入：先小試，再擴大",
+          title: "怎麼開始？三步走。",
           body: "不要一口氣全改，先用低風險方式證明有效，再全面推開。",
           evidence: "證據來源：design.md migration plan 與 open questions"
         },
@@ -1237,7 +1452,9 @@
     let mode = loadMode();
 
     const stageNames = [
+      "報告人",
       "問題定義",
+      "路線圖",
       "問題定義",
       "流程總覽",
       "流程總覽",
@@ -1252,7 +1469,7 @@
       "決策收斂"
     ];
 
-    const total = 13;
+    const total = 15;
     let current = 0;
 
     function applyModeCopy() {
@@ -1298,6 +1515,8 @@
       slide.classList.remove("slide-in");
       requestAnimationFrame(() => slide.classList.add("slide-in"));
     }
+
+    function jumpTo(index) { current = index; render(); }
 
     function move(delta) {
       const target = Math.max(0, Math.min(total - 1, current + delta));
